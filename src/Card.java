@@ -1,7 +1,6 @@
+package src;
+
 import java.util.*;
-
-
-import java.io.*;
 
 public class Card{
 private Suit suit;
@@ -34,7 +33,7 @@ private Value value;
       return this.suit; 
    }
 
-   //  public int cardsValue(Deck playerDeck1, Deck playerDeck2){
+   //  public int cardsValue(src.Deck playerDeck1, src.Deck playerDeck2){
   //int cardValue =0;
  
 

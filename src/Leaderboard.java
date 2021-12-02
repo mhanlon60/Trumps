@@ -1,3 +1,4 @@
+package src;
 
 import java.util.*;
 import java.io.*;
@@ -129,7 +130,7 @@ public class Leaderboard  {
 
 //}
 
- System.out.println("Leaderboard");
+ System.out.println("src.Leaderboard");
  System.out.println("Player Name         Games Won");
       
       for(int i = 0; i < 2; i++){

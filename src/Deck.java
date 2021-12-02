@@ -1,8 +1,6 @@
+package src;
+
 import java.util.*;
-
-
-
-import java.io.*;
 
 public class Deck {
   private ArrayList<Card> cards;
@@ -95,7 +93,7 @@ public class Deck {
  // int cardValue =0;
  
 
-  //for(Card aCards : this.cards){
+  //for(src.Card aCards : this.cards){
    // switch(aCards.getValue()){
     //case Two: cardValue = 2; break;
   //  case Three: cardValue = 3; break;

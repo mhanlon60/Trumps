@@ -1,4 +1,8 @@
+package src;
 
+import src.Card;
+import src.Deck;
+import src.Leaderboard;
 
 import java.util.*;
 import java.io.*;
@@ -18,7 +22,7 @@ public class Trumps  {
 // top level design
   void processTrumps() throws IOException {
 
-     System.out.println("\nWelcome to Trumps");
+     System.out.println("\nWelcome to src.Trumps");
 
      
 
@@ -32,7 +36,7 @@ public class Trumps  {
 
       
 
-   //Create Playing Deck
+   //Create Playing src.Deck
    Deck playingDeck = new Deck();
    playingDeck.createFulldeck();
    playingDeck.shuffle();
@@ -151,8 +155,8 @@ validate( playerDeck1,  playerDeck2 ,  chosenCard,  opponentCard,  trumpSuit, ca
 // leaderboardchoice = keyboard.nextLine();
 
 // if(leaderboardchoice == "L"){
-  //Leaderboard Leaderboard = new Leaderboard();
-   //     Leaderboard.processLeaderboard();
+  //src.Leaderboard src.Leaderboard = new src.Leaderboard();
+   //     src.Leaderboard.processLeaderboard();
 
 // }
 // if (leaderboardchoice == "P"){
@@ -177,7 +181,7 @@ handsplayed++;
   
   
   
-  public void validate(Deck playerDeck1, Deck playerDeck2 , Card chosenCard, Card opponentCard, String trumpSuit,int cardchoice, boolean gameover, boolean Gameplaying,String playername, int startingcards) throws IOException{
+  public void validate(Deck playerDeck1, Deck playerDeck2 , Card chosenCard, Card opponentCard, String trumpSuit, int cardchoice, boolean gameover, boolean Gameplaying, String playername, int startingcards) throws IOException{
      boolean Suitvalidated = false;
      boolean foundsameSuit = false;
   boolean foundtrumpSuit = false;
@@ -386,7 +390,7 @@ handsplayed++;
   public String gettrumpSuit(){
         int r = (int) (Math.random()*4);
         String trumpSuit = new String [] {"Clubs", "Diamonds", "Spades", "Hearts"}[r];
-       System.out.println("Trumps is " + trumpSuit);
+       System.out.println("src.Trumps is " + trumpSuit);
         return trumpSuit;
     }
 
@@ -527,7 +531,7 @@ handsplayed++;
       return playername;
     }
 
-   // public int minValue(Deck playerDeck2){
+   // public int minValue(src.Deck playerDeck2){
    //   int minValue = 0;
    //   int minValuePosition =0;
     

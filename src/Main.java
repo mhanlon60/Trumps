@@ -1,3 +1,5 @@
+package src;
+
 import java.util.*;
 import java.io.*;
 
@@ -6,8 +8,8 @@ class Main {
       Trumps AHProject = new Trumps();
     AHProject.processTrumps();
 
-      //Leaderboard Leaderboard = new Leaderboard();
-       // Leaderboard.processLeaderboard();
+      //src.Leaderboard src.Leaderboard = new src.Leaderboard();
+       // src.Leaderboard.processLeaderboard();
 
   }
 }
