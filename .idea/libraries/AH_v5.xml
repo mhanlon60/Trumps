@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AH-v5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/AH-v5.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
