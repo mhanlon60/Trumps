@@ -18,16 +18,19 @@ public class Trumps {
     boolean Suitvalidated = false;
     boolean Gameplaying = true;
 
-
-
-        String playerName = getPlayerNameOnStart();
+    String playerName = getPlayerNameOnStart();
 
     public Trumps() throws IOException {
     }
 
     private String getPlayerNameOnStart() throws IOException {
         System.out.println("\nWelcome to Trumps");
-        System.out.println(readLeaderboard());
+        try {
+            System.out.println("Previous Performance: " + readLeaderboard());
+        }
+        catch (FileNotFoundException ex) {
+            System.out.println("Unable to Find Leaderboard File");
+        }
         System.out.println("\nEnter player name");
         return keyboard.nextLine();
     }
@@ -143,11 +146,11 @@ public class Trumps {
     public String readLeaderboard() throws IOException {
         String csv = "";
         String[] valueList = new String[3];
-        Scanner fileReader = new Scanner(new File("C:/Users/mbhan/IdeaProjects/Trumps2/src/leaderboard.txt"));
+        Scanner fileReader = new Scanner(new File("C:/Users/mbhan/IdeaProjects/Trumps2/leaderboard.txt"));
         String playerLastPerformance = "";
             csv = fileReader.nextLine();
             valueList = csv.split(",");
-            playerLastPerformance += valueList[0] + "Hands" + valueList[1] + "Games" + valueList[2];
+            playerLastPerformance += "Player : " + valueList[0] + " || Hands : " + valueList[1] + " || Games : " + valueList[2];
         fileReader.close();
         return playerLastPerformance;
     }
@@ -220,7 +223,7 @@ public class Trumps {
     public String getTrumpSuit() {
         int r = (int) (Math.random() * 4);
         String trumpSuit = new String[]{"Clubs", "Diamonds", "Spades", "Hearts"}[r];
-        System.out.println("src.Trumps is " + trumpSuit);
+        System.out.println("Trumps is " + trumpSuit);
         return trumpSuit;
     }
 

@@ -1,2 +1,2 @@
-Player2, 6, 1
+Player2,3,0
 
