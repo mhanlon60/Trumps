@@ -1,8 +1,3 @@
-package src;
-
-import src.Card;
-import src.Deck;
-import src.Leaderboard;
 
 import java.util.*;
 import java.io.*;
@@ -17,162 +12,95 @@ public class Trumps  {
   int gameswon = 0;
   int gameslost = 0;
 
- 
+  int handsplayed = 0;
 
+    int startingcards = 7;
+    int DealtCards = 0;
+
+    private String getPlayerNameOnStart(){
+        System.out.println("\nWelcome to Trumps");
+        System.out.println("\nEnter player name");
+        String playerName = keyboard.nextLine();
+        return playerName;
+    }
+
+    private void printHands(Deck playerDeck1) {
+        System.out.println("\nYour hand:");
+        System.out.println(playerDeck1.toString());
+
+        // System.out.println("\nOpponent hand:");
+        // System.out.println(playerDeck2.toString());
+    }
+
+    private int getCardNumber(Deck playerDeck1){
+        System.out.println("\nWhat card do you want to play");
+        int cardChoice = keyboard.nextInt();
+
+        while(cardChoice > playerDeck1.deckSize() || cardChoice < 1){
+            System.out.println("\nError, Input card number again");
+            cardChoice = keyboard.nextInt();
+        }
+        return cardChoice;
+    }
+
+    private Deck createDeck() {
+        Deck playingDeck = new Deck();
+        playingDeck.createFulldeck();
+        playingDeck.shuffle();
+        return playingDeck;
+    }
+
+    private void dealCards(Deck playerDeck1, Deck playerDeck2, Deck playingDeck) {
+        while (DealtCards < startingcards) {
+            playerDeck1.Draw(playingDeck);
+            playerDeck2.Draw(playingDeck);
+            DealtCards++;
+        }
+    }
 // top level design
   void processTrumps() throws IOException {
 
-     System.out.println("\nWelcome to src.Trumps");
+        String playerName = getPlayerNameOnStart();
 
-     
+     Deck playingDeck = createDeck();
+     Deck playerDeck1 = new Deck();
+     Deck playerDeck2 = new Deck();
 
-      System.out.println("\nEnter player name (7 characters)");
-    String playername = keyboard.nextLine();
+    int u = 0;
 
-    //while (playername.length() != 7){
-     // System.out.println("\n Error! Enter player name (7 characters)");
-      // playername = keyboard.nextLine();
-   // }
+    Card chosenCard;
 
-      
+    boolean gameover = false;
+    boolean Gameplaying = true;
 
-   //Create Playing src.Deck
-   Deck playingDeck = new Deck();
-   playingDeck.createFulldeck();
-   playingDeck.shuffle();
-    
-  Deck playerDeck1 = new Deck();
-  Deck playerDeck2 = new Deck();
-  Deck player1Wins = new Deck();
-  Deck player2Wins = new Deck();
-
-  
-  int intvalue1 =0 ;
-   int intvalue2 =0 ;
-
-   //int handswon = 0;
-  // int gameswon = 0;
-  // int handslost = 0;
-  // int gameslost = 0;
-   int startingcards = 7;
-   int DealtCards = 0;
-   int handsplayed = 0;
-   int u = 0;
-
-
-
-  Card chosenCard;
-
-   boolean endRound = false;
-   boolean trump = false;
-   boolean gameover = false;
-  
-   boolean Gameplaying = true;
-   boolean handplaying = true;
-
-   String trumpSuit = "";
- 
-
-
-     
-   
-
-
-
-  
-
-   
-
-         trumpSuit = (gettrumpSuit());
-        //Start Dealing
-    //Player gets two cards
-while(DealtCards < startingcards){
-    playerDeck1.Draw(playingDeck);
-   
-
-    //Dealer cards
-    playerDeck2.Draw(playingDeck);
-    DealtCards++;
-}
-   
- 
-   
+   dealCards(playerDeck1,playerDeck2,playingDeck);
+   String trumpSuit = (gettrumpSuit());
    
       //Game Loop
-    while(Gameplaying = true){
+    while(Gameplaying == true){
       while(u < playerDeck1.deckSize()){
-    
 
-     
-
-      System.out.println("\nYour hand:");
-        System.out.println(playerDeck1.toString());
-
-       // System.out.println("\nOpponent hand:");
-       // System.out.println(playerDeck2.toString());
-
-      
+      printHands(playerDeck1);
 
          //Player Move
-    System.out.println("\nWhat card do you want to play");
-    int cardchoice = keyboard.nextInt();
-
+      int cardChoice = getCardNumber(playerDeck1);
     
-
-
-    while(cardchoice > playerDeck1.deckSize() || cardchoice < 1){
-      
-      System.out.println("\nError, Input card number again");
-       cardchoice = keyboard.nextInt();
-      
-      
-    }
-   
-
-    
-        chosenCard = playerDeck1.getCard(cardchoice-1);
+        chosenCard = playerDeck1.getCard(cardChoice-1);
          Card opponentCard = null;
-        playerDeck1.removeCard(cardchoice-1);
+        playerDeck1.removeCard(cardChoice-1);
     
    System.out.println(chosenCard) ;
 
 
-validate( playerDeck1,  playerDeck2 ,  chosenCard,  opponentCard,  trumpSuit, cardchoice, gameover, Gameplaying, playername, startingcards);
+validate( playerDeck1,  playerDeck2 ,  chosenCard,  opponentCard,  trumpSuit, cardChoice, gameover, Gameplaying, playerName, startingcards);
 
 
 
 
     }
     }
-       
-      // if(Gameplaying == false){
-
-
-   // System.out.println("Press 'L' for leaderboard");
-    // System.out.println("Press 'P' TO play");
-
-   //  String leaderboardchoice = "";
-// leaderboardchoice = keyboard.nextLine();
-
-// if(leaderboardchoice == "L"){
-  //src.Leaderboard src.Leaderboard = new src.Leaderboard();
-   //     src.Leaderboard.processLeaderboard();
-
-// }
-// if (leaderboardchoice == "P"){
-//   System.out.println("Game over");
-
-// }
-
-      // }
 
 handsplayed++;
-
-
-
-    
-
-
 
   }
   
@@ -300,10 +228,6 @@ handsplayed++;
   
  
 //}
- 
-  
-    
-
 
     }
     
