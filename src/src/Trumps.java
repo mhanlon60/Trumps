@@ -18,13 +18,18 @@ public class Trumps {
     boolean Suitvalidated = false;
     boolean Gameplaying = true;
 
-    String playerName = getPlayerNameOnStart();
 
-    private String getPlayerNameOnStart() {
+
+        String playerName = getPlayerNameOnStart();
+
+    public Trumps() throws IOException {
+    }
+
+    private String getPlayerNameOnStart() throws IOException {
         System.out.println("\nWelcome to Trumps");
+        System.out.println(readLeaderboard());
         System.out.println("\nEnter player name");
-        String playerName = keyboard.nextLine();
-        return playerName;
+        return keyboard.nextLine();
     }
 
     private void printHands(Deck playerDeck1) {
@@ -68,7 +73,6 @@ public class Trumps {
     void processTrumps() throws IOException {
         Deck playerDeck1 = new Deck();
         Deck playerDeck2 = new Deck();
-        Card opponentCard = null;
 
         Deck playingDeck = createDeck();
         dealCards(playerDeck1, playerDeck2, playingDeck);
@@ -80,89 +84,72 @@ public class Trumps {
                 printHands(playerDeck1);
                 Card chosenCard = getChosenCard(playerDeck1);
                 System.out.println(chosenCard);
-                validate(playerDeck1, playerDeck2, chosenCard, opponentCard, trumpSuit);
+                validate(playerDeck1, playerDeck2, chosenCard, trumpSuit);
             }
         }
         handsplayed++;
     }
 
-    public void validate(Deck playerDeck1, Deck playerDeck2, Card chosenCard, Card opponentCard, String trumpSuit) throws IOException {
+    public void validate(Deck playerDeck1, Deck playerDeck2, Card chosenCard, String trumpSuit) throws IOException {
 
         boolean foundsameSuit = false;
         boolean foundtrumpSuit = false;
-        boolean foundnoSuit = false;
 
         foundsameSuit = evaluateSameSuit(playerDeck2, chosenCard, foundsameSuit);
 
         if (!foundsameSuit) {
             foundtrumpSuit = evaluateTrumpSuit(playerDeck2, chosenCard, foundsameSuit, foundtrumpSuit, trumpSuit);
         }
-
         if (!foundsameSuit && !foundtrumpSuit) {
             evaluateNoSuit(playerDeck2);
         }
 
-
         if (playerDeck1.deckSize() == 0) {
-
-            if (handslost < handswon) {
-                System.out.println("You win the game");
-                gameswon++;
-                endgame(playerDeck1, handswon, gameswon);
-            } else if (handslost > handswon) {
-                System.out.println("You lose the game");
-                gameslost++;
-                endgame(playerDeck1, handswon, gameswon);
-            }
-
-
+            determineWinner();
         }
-
-        if (!Gameplaying) {
-            startingcards--;
-        }
-
 
     }
 
-    public void endgame(Deck playerDeck1, int handswon, int gameswon) throws IOException {
+    private void determineWinner() throws IOException {
+        if (handslost < handswon) {
+            System.out.println("You win the game");
+            gameswon++;
+            endgame(handswon, gameswon);
+        } else if (handslost > handswon) {
+            System.out.println("You lose the game");
+            gameslost++;
+            endgame(handswon, gameswon);
+        }
+    }
 
-        if (playerDeck1.deckSize() == 0) {
-            String decision = "";
-            System.out.println("Out of cards");
+    public void endgame(int handswon, int gameswon) throws IOException {
 
             String resultsData = "";
             String resultsData1 = "";
 
-
-// Java object to output a file
             PrintWriter fileWriter;
             PrintWriter fileWriter1;
 
-
-            // open file for writing
             fileWriter = new PrintWriter("leaderboard.txt");
-
-            // write output string to file
-            fileWriter.println(resultsData = resultsData + playerName + "," + gameswon + "\n");
-
-
-            // close the file
+            fileWriter.println(resultsData + playerName + ", " + handswon + ", " + gameswon + "\n");
             fileWriter.close();
 
-            // open file for writing
             fileWriter1 = new PrintWriter("opponent.txt");
-
-            // write output string to file
-            fileWriter1.println(resultsData1 = resultsData1 + "Player2" + "," + gameslost + "\n");
-
-
-            // close the file
+            fileWriter1.println(resultsData1 + "Player2" + ", " + handslost + ", " + gameslost + "\n");
             fileWriter1.close();
-
             Gameplaying = false;
-
         }
+
+    public String readLeaderboard() throws IOException {
+        String csv = "";
+        String[] valueList = new String[3];
+        Scanner fileReader = new Scanner(new File("C:/Users/mbhan/IdeaProjects/Trumps2/src/leaderboard.txt"));
+        String playerLastPerformance = "";
+            csv = fileReader.nextLine();
+            valueList = csv.split(",");
+            playerLastPerformance += valueList[0] + "Hands" + valueList[1] + "Games";
+        fileReader.close();
+        return playerLastPerformance;
     }
 
     public boolean evaluateSameSuit(Deck playerDeck2, Card chosenCard, boolean foundsameSuit) {
@@ -176,11 +163,11 @@ public class Trumps {
                 playerDeck2.removeCard(counter);
                 System.out.println("\nOpponent plays " + opponentCard);
 
-                if (cardsValue1(chosenCard) > cardsValue2(playerDeck2, opponentCard)) {
+                if (cardsValue1(chosenCard) > cardsValue2(opponentCard)) {
                     System.out.println("\nYou win the hand");
                     handswon += 1;
                     foundsameSuit = true;
-                } else if (cardsValue1(chosenCard) < cardsValue2(playerDeck2, opponentCard)) {
+                } else if (cardsValue1(chosenCard) < cardsValue2(opponentCard)) {
                     System.out.println("\nYou lose the hand");
                     handslost += 1;
                     foundsameSuit = true;
@@ -201,10 +188,10 @@ public class Trumps {
                 System.out.println("Opponent plays " + opponentCard);
                 foundTrumpSuit = true;
 
-                if (cardsValue1(chosenCard) > cardsValue2(playerDeck2, opponentCard)) {
+                if (cardsValue1(chosenCard) > cardsValue2(opponentCard)) {
                     System.out.println("You win the hand");
                     handswon += 1;
-                } else if (cardsValue1(chosenCard) < cardsValue2(playerDeck2, opponentCard)) {
+                } else if (cardsValue1(chosenCard) < cardsValue2(opponentCard)) {
                     System.out.println("You lose the hand");
                     handslost += 1;
                 }
@@ -240,7 +227,6 @@ public class Trumps {
     public int cardsValue1(Card chosenCard) {
 
         int intvalue1 = 0;
-
 
         if (chosenCard.getValue().toString() == ("Two")) {
             intvalue1 = 2;
@@ -288,10 +274,9 @@ public class Trumps {
     }
 
 
-    public int cardsValue2(Deck playerDeck2, Card opponentCard) {
+    public int cardsValue2(Card opponentCard) {
 
         int intvalue2 = 0;
-
 
         if (opponentCard.getValue().toString() == ("Two")) {
             intvalue2 = 2;
