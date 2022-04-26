@@ -131,11 +131,11 @@ public class Trumps {
             PrintWriter fileWriter1;
 
             fileWriter = new PrintWriter("leaderboard.txt");
-            fileWriter.println(resultsData + playerName + ", " + handswon + ", " + gameswon + "\n");
+            fileWriter.println(resultsData + playerName + "," + handswon + "," + gameswon + "\n");
             fileWriter.close();
 
             fileWriter1 = new PrintWriter("opponent.txt");
-            fileWriter1.println(resultsData1 + "Player2" + ", " + handslost + ", " + gameslost + "\n");
+            fileWriter1.println(resultsData1 + "Player2" + "," + handslost + "," + gameslost + "\n");
             fileWriter1.close();
             Gameplaying = false;
         }
@@ -147,7 +147,7 @@ public class Trumps {
         String playerLastPerformance = "";
             csv = fileReader.nextLine();
             valueList = csv.split(",");
-            playerLastPerformance += valueList[0] + "Hands" + valueList[1] + "Games";
+            playerLastPerformance += valueList[0] + "Hands" + valueList[1] + "Games" + valueList[2];
         fileReader.close();
         return playerLastPerformance;
     }
