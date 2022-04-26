@@ -3,21 +3,24 @@ import java.util.*;
 import java.io.*;
 import java.lang.*;
 
-public class Trumps  {
+public class Trumps {
 
-  Scanner keyboard = new Scanner(System.in);
+    Scanner keyboard = new Scanner(System.in);
 
     int handswon = 0;
-  int handslost = 0;
-  int gameswon = 0;
-  int gameslost = 0;
-
-  int handsplayed = 0;
-
+    int handslost = 0;
+    int gameswon = 0;
+    int gameslost = 0;
+    int handsplayed = 0;
     int startingcards = 7;
     int DealtCards = 0;
 
-    private String getPlayerNameOnStart(){
+    boolean Suitvalidated = false;
+    boolean Gameplaying = true;
+
+    String playerName = getPlayerNameOnStart();
+
+    private String getPlayerNameOnStart() {
         System.out.println("\nWelcome to Trumps");
         System.out.println("\nEnter player name");
         String playerName = keyboard.nextLine();
@@ -32,15 +35,18 @@ public class Trumps  {
         // System.out.println(playerDeck2.toString());
     }
 
-    private int getCardNumber(Deck playerDeck1){
+    private Card getChosenCard(Deck playerDeck1) {
         System.out.println("\nWhat card do you want to play");
         int cardChoice = keyboard.nextInt();
 
-        while(cardChoice > playerDeck1.deckSize() || cardChoice < 1){
+        while (cardChoice > playerDeck1.deckSize() || cardChoice < 1) {
             System.out.println("\nError, Input card number again");
             cardChoice = keyboard.nextInt();
         }
-        return cardChoice;
+        Card chosenCard;
+        chosenCard = playerDeck1.getCard(cardChoice - 1);
+        playerDeck1.removeCard(cardChoice - 1);
+        return chosenCard;
     }
 
     private Deck createDeck() {
@@ -57,435 +63,278 @@ public class Trumps  {
             DealtCards++;
         }
     }
-// top level design
-  void processTrumps() throws IOException {
 
-        String playerName = getPlayerNameOnStart();
+    // top level design
+    void processTrumps() throws IOException {
+        Deck playerDeck1 = new Deck();
+        Deck playerDeck2 = new Deck();
+        Card opponentCard = null;
 
-     Deck playingDeck = createDeck();
-     Deck playerDeck1 = new Deck();
-     Deck playerDeck2 = new Deck();
+        Deck playingDeck = createDeck();
+        dealCards(playerDeck1, playerDeck2, playingDeck);
+        String trumpSuit = (getTrumpSuit());
 
-    int u = 0;
-
-    Card chosenCard;
-
-    boolean gameover = false;
-    boolean Gameplaying = true;
-
-   dealCards(playerDeck1,playerDeck2,playingDeck);
-   String trumpSuit = (gettrumpSuit());
-   
-      //Game Loop
-    while(Gameplaying == true){
-      while(u < playerDeck1.deckSize()){
-
-      printHands(playerDeck1);
-
-         //Player Move
-      int cardChoice = getCardNumber(playerDeck1);
-    
-        chosenCard = playerDeck1.getCard(cardChoice-1);
-         Card opponentCard = null;
-        playerDeck1.removeCard(cardChoice-1);
-    
-   System.out.println(chosenCard) ;
-
-
-validate( playerDeck1,  playerDeck2 ,  chosenCard,  opponentCard,  trumpSuit, cardChoice, gameover, Gameplaying, playerName, startingcards);
-
-
-
-
-    }
-    }
-
-handsplayed++;
-
-  }
-  
-
-
-  
-  
-  
-  public void validate(Deck playerDeck1, Deck playerDeck2 , Card chosenCard, Card opponentCard, String trumpSuit, int cardchoice, boolean gameover, boolean Gameplaying, String playername, int startingcards) throws IOException{
-     boolean Suitvalidated = false;
-     boolean foundsameSuit = false;
-  boolean foundtrumpSuit = false;
-  boolean foundnoSuit = false;
-
-
-  
-     int s =0;
-   int t = 0;
-   int z = 0;
-
-
-    while(Suitvalidated == false){
-
-
-        //plays same suit
-    //works
- 
-        while(s < playerDeck2.deckSize()){
-       if(playerDeck2.getCard(s).getSuit() == chosenCard.getSuit()){
-     opponentCard = playerDeck2.getCard(s);
-     playerDeck2.removeCard(s);
-     System.out.println("\nOpponent plays " +  opponentCard);
-     
-   
-  
-  
-     foundsameSuit = true;
-
-     if(foundsameSuit == true){
-        if(cardsValue1(chosenCard) > cardsValue2(playerDeck2,  opponentCard)){
-         
-       System.out.println("\nYou win");
-       handswon += 1;
-
-     }
-     else if(cardsValue1(chosenCard) < cardsValue2(playerDeck2,  opponentCard)){
-         
-       System.out.println("\nYou lose ");
-   handslost += 1;
-     }
-     }
-    
-     Suitvalidated = true;
-     
-    break;
-   }
-   s++;
+        //Game Loop
+        while (Gameplaying) {
+            while (0 < playerDeck1.deckSize()) {
+                printHands(playerDeck1);
+                Card chosenCard = getChosenCard(playerDeck1);
+                System.out.println(chosenCard);
+                validate(playerDeck1, playerDeck2, chosenCard, opponentCard, trumpSuit);
+            }
         }
-           
- 
-       //plays trumps
-      if(foundsameSuit == false){
-        while(t < playerDeck2.deckSize()){
-          if((((playerDeck2.getCard(t).getSuit())).toString().equals(trumpSuit))){
-      opponentCard = playerDeck2.getCard(t);
-      playerDeck2.removeCard(t);
-    System.out.println("Opponent plays " +  opponentCard);
-    
-    foundtrumpSuit = true;
+        handsplayed++;
+    }
 
-    if(cardsValue1(chosenCard) > cardsValue2(playerDeck2,  opponentCard)){
-         
-       System.out.println("You win");
-   handswon += 1;
-     }
-     else if(cardsValue1(chosenCard) < cardsValue2(playerDeck2,  opponentCard)){
-         
-       System.out.println("You lose ");
-         handslost += 1;
-     }
+    public void validate(Deck playerDeck1, Deck playerDeck2, Card chosenCard, Card opponentCard, String trumpSuit) throws IOException {
 
+        boolean foundsameSuit = false;
+        boolean foundtrumpSuit = false;
+        boolean foundnoSuit = false;
 
-         if(foundtrumpSuit == true && foundsameSuit == false){
-         
-       System.out.println("You lose");
-           handslost += 1;
-     }
+        foundsameSuit = evaluateSameSuit(playerDeck2, chosenCard, foundsameSuit);
 
-     
-   
-     
-     
-     
-     Suitvalidated = true;
-     
-     break;
-          }
-          t++;
+        if (!foundsameSuit) {
+            foundtrumpSuit = evaluateTrumpSuit(playerDeck2, chosenCard, foundsameSuit, foundtrumpSuit, trumpSuit);
         }
-           
-      }
 
-       if(foundsameSuit == false && foundtrumpSuit == false){
-      int minValuePosition = 0;
+        if (!foundsameSuit && !foundtrumpSuit) {
+            evaluateNoSuit(playerDeck2);
+        }
 
-      opponentCard = playerDeck2.getCard(0);
-      playerDeck2.removeCard(0);
-      
-    System.out.println("Opponent plays " +  opponentCard);
-   
-    foundnoSuit = true;
 
-    if(foundnoSuit == true){
-      System.out.println("You win");
-     handswon += 1;
-    }
-     
-     Suitvalidated = true;
-     }
-     
-//if(playerDeck1.deckSize() == 0){
+        if (playerDeck1.deckSize() == 0) {
 
-  // System.out.println("Out of cards");
-  // gameover = true;
-  
- 
-//}
+            if (handslost < handswon) {
+                System.out.println("You win the game");
+                gameswon++;
+                endgame(playerDeck1, handswon, gameswon);
+            } else if (handslost > handswon) {
+                System.out.println("You lose the game");
+                gameslost++;
+                endgame(playerDeck1, handswon, gameswon);
+            }
+
+
+        }
+
+        if (!Gameplaying) {
+            startingcards--;
+        }
+
 
     }
-    
-  if(playerDeck1.deckSize() == 0){
 
-  if(handslost < handswon){
-     System.out.println("You win the game");
-     gameswon++;
-     endgame(playerDeck1, cardchoice, gameover, handswon, gameswon, playername);
-      Gameplaying = false;
-      
-    
-   }
-   else if(handslost > handswon){
-      System.out.println("You lose the game");
-     gameslost++;
-    endgame(playerDeck1, cardchoice, gameover, handswon, gameswon, playername);
-      Gameplaying = false;
-    
-   }
+    public void endgame(Deck playerDeck1, int handswon, int gameswon) throws IOException {
+
+        if (playerDeck1.deckSize() == 0) {
+            String decision = "";
+            System.out.println("Out of cards");
+
+            String resultsData = "";
+            String resultsData1 = "";
 
 
-   
-}
-
-  if(Gameplaying == false){
-    startingcards--;
-  }
-
-   
-   
-   
-
-  }
-
-  public void endgame(Deck playerDeck1, int cardchoice, boolean gameover, int handswon, int gameswon, String playername) throws IOException{
-
-     if(playerDeck1.deckSize() == 0){
- if(cardchoice > 0){
-   String decision = "";
-   System.out.println("Out of cards");
-   gameover = true;
-
-    String resultsData = "";
-    String resultsData1 = "";
-
- 
 // Java object to output a file
-    PrintWriter fileWriter;
-      PrintWriter fileWriter1;
+            PrintWriter fileWriter;
+            PrintWriter fileWriter1;
 
 
-    // open file for writing
-    fileWriter = new PrintWriter("leaderboard.txt");
+            // open file for writing
+            fileWriter = new PrintWriter("leaderboard.txt");
 
-    // write output string to file
-    fileWriter.println(resultsData = resultsData + playername + "," + gameswon + "\n");
-
-
-    // close the file
-    fileWriter.close();
-
-     // open file for writing
-    fileWriter1 = new PrintWriter("opponent.txt");
-
-    // write output string to file
-    fileWriter1.println(resultsData1 = resultsData1 + "Player2" + "," + gameslost + "\n");
+            // write output string to file
+            fileWriter.println(resultsData = resultsData + playerName + "," + gameswon + "\n");
 
 
-    // close the file
-    fileWriter1.close();
+            // close the file
+            fileWriter.close();
+
+            // open file for writing
+            fileWriter1 = new PrintWriter("opponent.txt");
+
+            // write output string to file
+            fileWriter1.println(resultsData1 = resultsData1 + "Player2" + "," + gameslost + "\n");
 
 
+            // close the file
+            fileWriter1.close();
 
-   Leaderboard Leaderboard = new Leaderboard();
-        Leaderboard.processLeaderboard();
+            Gameplaying = false;
 
-        
- 
- }
-}
-  }
+        }
+    }
 
-  public String gettrumpSuit(){
-        int r = (int) (Math.random()*4);
-        String trumpSuit = new String [] {"Clubs", "Diamonds", "Spades", "Hearts"}[r];
-       System.out.println("src.Trumps is " + trumpSuit);
+    public boolean evaluateSameSuit(Deck playerDeck2, Card chosenCard, boolean foundsameSuit) {
+
+        int counter = 0;
+        //plays same suit
+        //works
+        while (counter < playerDeck2.deckSize() && !foundsameSuit) {
+            if (playerDeck2.getCard(counter).getSuit() == chosenCard.getSuit()) {
+                Card opponentCard = playerDeck2.getCard(counter);
+                playerDeck2.removeCard(counter);
+                System.out.println("\nOpponent plays " + opponentCard);
+
+                if (cardsValue1(chosenCard) > cardsValue2(playerDeck2, opponentCard)) {
+                    System.out.println("\nYou win the hand");
+                    handswon += 1;
+                    foundsameSuit = true;
+                } else if (cardsValue1(chosenCard) < cardsValue2(playerDeck2, opponentCard)) {
+                    System.out.println("\nYou lose the hand");
+                    handslost += 1;
+                    foundsameSuit = true;
+                }
+            }
+            counter++;
+        }
+        return foundsameSuit;
+    }
+
+    public boolean evaluateTrumpSuit(Deck playerDeck2, Card chosenCard, boolean foundsameSuit, boolean foundTrumpSuit, String trumpSuit) {
+
+        int counter = 0;
+        while (counter < playerDeck2.deckSize()) {
+            if ((((playerDeck2.getCard(counter).getSuit())).toString().equals(trumpSuit))) {
+                Card opponentCard = playerDeck2.getCard(counter);
+                playerDeck2.removeCard(counter);
+                System.out.println("Opponent plays " + opponentCard);
+                foundTrumpSuit = true;
+
+                if (cardsValue1(chosenCard) > cardsValue2(playerDeck2, opponentCard)) {
+                    System.out.println("You win the hand");
+                    handswon += 1;
+                } else if (cardsValue1(chosenCard) < cardsValue2(playerDeck2, opponentCard)) {
+                    System.out.println("You lose the hand");
+                    handslost += 1;
+                }
+
+                if (foundTrumpSuit && !foundsameSuit) {
+                    System.out.println("You lose the hand");
+                    handslost += 1;
+                }
+                Suitvalidated = true;
+                break;
+            }
+            counter++;
+        }
+        return foundTrumpSuit;
+    }
+
+    public void evaluateNoSuit(Deck playerDeck2) {
+        Card opponentCard = playerDeck2.getCard(0);
+        playerDeck2.removeCard(0);
+        System.out.println("Opponent plays " + opponentCard);
+        System.out.println("You win the hand");
+        handswon += 1;
+        Suitvalidated = true;
+    }
+
+    public String getTrumpSuit() {
+        int r = (int) (Math.random() * 4);
+        String trumpSuit = new String[]{"Clubs", "Diamonds", "Spades", "Hearts"}[r];
+        System.out.println("src.Trumps is " + trumpSuit);
         return trumpSuit;
     }
 
-   public int cardsValue1(Card chosenCard){
-     
-      int intvalue1 = 0;
-     
+    public int cardsValue1(Card chosenCard) {
 
-     if(chosenCard.getValue().toString() == ("Two")){
-       intvalue1 = 2;
-  
-     }
-     else   if(chosenCard.getValue().toString() == ("Three")){
-       intvalue1 = 3;
-   
-     }
-     else   if(chosenCard.getValue().toString() == ("Four")){
-       intvalue1 = 4;
-      
-     }
-     else   if(chosenCard.getValue().toString() == ("Five")){
-       intvalue1 = 5;
-       
-     }
-     else   if(chosenCard.getValue().toString() == ("Six")){
-       intvalue1 = 6;
-       
-     }
-     else   if(chosenCard.getValue().toString() == ("Seven")){
-       intvalue1 = 7;
-       
-     }
-     else   if(chosenCard.getValue().toString() == ("Eight")){
-       intvalue1 = 8;
-      
-     }
-     else   if(chosenCard.getValue().toString() == ("Nine")){
-       intvalue1 = 9;
-    
-     }
-     else   if(chosenCard.getValue().toString() == ("Ten")){
-       intvalue1 = 10;
-    
-     }
-     else   if(chosenCard.getValue().toString() == ("Jack")){
-       intvalue1 = 11;
-    
-     }
-     else   if(chosenCard.getValue().toString() == ("Queen")){
-       intvalue1 = 12;
+        int intvalue1 = 0;
 
-     }
-     else   if(chosenCard.getValue().toString() == ("King")){
-       intvalue1 = 13;
-      
-     }
-     else   if(chosenCard.getValue().toString() == ("Ace")){
-       intvalue1 = 14;
-   
-     }
 
-    
-     
-  
-     
-      
-       return intvalue1;
-    }
-    
+        if (chosenCard.getValue().toString() == ("Two")) {
+            intvalue1 = 2;
 
-    public int cardsValue2(Deck playerDeck2, Card opponentCard){
-     
-      int intvalue2 = 0;
-    
+        } else if (chosenCard.getValue().toString() == ("Three")) {
+            intvalue1 = 3;
 
-     if(opponentCard.getValue().toString() == ("Two")){
-       intvalue2 = 2;
-      
-     }
-     else   if(opponentCard.getValue().toString() == ("Three")){
-       intvalue2 = 3;
-   
-     }
-     else   if(opponentCard.getValue().toString() == ("Four")){
-       intvalue2 = 4;
-   
-     }
-     else   if(opponentCard.getValue().toString() == ("Five")){
-       intvalue2 = 5;
-   
-     }
-     else   if(opponentCard.getValue().toString() == ("Six")){
-       intvalue2 = 6;
+        } else if (chosenCard.getValue().toString() == ("Four")) {
+            intvalue1 = 4;
 
-     }
-     else   if(opponentCard.getValue().toString() == ("Seven")){
-       intvalue2 = 7;
-  
-     }
-     else   if(opponentCard.getValue().toString() == ("Eight")){
-       intvalue2 = 8;
-    
-     }
-     else   if(opponentCard.getValue().toString() == ("Nine")){
-       intvalue2 = 9;
-     
-     }
-     else   if(opponentCard.getValue().toString() == ("Ten")){
-       intvalue2 = 10;
-     
-     }
-     else   if(opponentCard.getValue().toString() == ("Jack")){
-       intvalue2 = 11;
-  
-     }
-     else   if(opponentCard.getValue().toString() == ("Queen")){
-       intvalue2 = 12;
-    
-     }
-     else   if(opponentCard.getValue().toString() == ("King")){
-       intvalue2 = 13;
-    
-     }
-     else   if(opponentCard.getValue().toString() == ("Ace")){
-       intvalue2 = 14;
-     
-     }
+        } else if (chosenCard.getValue().toString() == ("Five")) {
+            intvalue1 = 5;
 
-    
-     
-  
-     
-      
-       return intvalue2;
+        } else if (chosenCard.getValue().toString() == ("Six")) {
+            intvalue1 = 6;
+
+        } else if (chosenCard.getValue().toString() == ("Seven")) {
+            intvalue1 = 7;
+
+        } else if (chosenCard.getValue().toString() == ("Eight")) {
+            intvalue1 = 8;
+
+        } else if (chosenCard.getValue().toString() == ("Nine")) {
+            intvalue1 = 9;
+
+        } else if (chosenCard.getValue().toString() == ("Ten")) {
+            intvalue1 = 10;
+
+        } else if (chosenCard.getValue().toString() == ("Jack")) {
+            intvalue1 = 11;
+
+        } else if (chosenCard.getValue().toString() == ("Queen")) {
+            intvalue1 = 12;
+
+        } else if (chosenCard.getValue().toString() == ("King")) {
+            intvalue1 = 13;
+
+        } else if (chosenCard.getValue().toString() == ("Ace")) {
+            intvalue1 = 14;
+
+        }
+
+
+        return intvalue1;
     }
 
-    public String playername(String playername){
-      return playername;
+
+    public int cardsValue2(Deck playerDeck2, Card opponentCard) {
+
+        int intvalue2 = 0;
+
+
+        if (opponentCard.getValue().toString() == ("Two")) {
+            intvalue2 = 2;
+
+        } else if (opponentCard.getValue().toString() == ("Three")) {
+            intvalue2 = 3;
+
+        } else if (opponentCard.getValue().toString() == ("Four")) {
+            intvalue2 = 4;
+
+        } else if (opponentCard.getValue().toString() == ("Five")) {
+            intvalue2 = 5;
+
+        } else if (opponentCard.getValue().toString() == ("Six")) {
+            intvalue2 = 6;
+
+        } else if (opponentCard.getValue().toString() == ("Seven")) {
+            intvalue2 = 7;
+
+        } else if (opponentCard.getValue().toString() == ("Eight")) {
+            intvalue2 = 8;
+
+        } else if (opponentCard.getValue().toString() == ("Nine")) {
+            intvalue2 = 9;
+
+        } else if (opponentCard.getValue().toString() == ("Ten")) {
+            intvalue2 = 10;
+
+        } else if (opponentCard.getValue().toString() == ("Jack")) {
+            intvalue2 = 11;
+
+        } else if (opponentCard.getValue().toString() == ("Queen")) {
+            intvalue2 = 12;
+
+        } else if (opponentCard.getValue().toString() == ("King")) {
+            intvalue2 = 13;
+
+        } else if (opponentCard.getValue().toString() == ("Ace")) {
+            intvalue2 = 14;
+
+        }
+
+
+        return intvalue2;
     }
-
-   // public int minValue(src.Deck playerDeck2){
-   //   int minValue = 0;
-   //   int minValuePosition =0;
-    
-    
-  //  minValue = playerDeck2.cardsValue();
-
-   // for(int i = 0; i < 3; i++){
-    //  if((playerDeck2.cardsValue()) <minValue){
-    //    minValue = playerDeck2.cardsValue();
-     //   minValuePosition = i;
-    //  }
-
-   // }
-
- //   return minValuePosition;
-  //  }
-
-  
 }
-
-//if(playerDeck2.getCard(s-1).getSuit() != chosenCard.getSuit()){
-      
-    
-  // if((((playerDeck2.getCard(s-1).getSuit())).toString().equals(trumpSuit))){
- ///     opponentCard = playerDeck2.getCard(t-1);
- //    System.out.println("Opponent plays " +  opponentCard);
- //    foundtrumpSuit = true;
-  //   Suitvalidated = true;
-    
-   
-  // }
-  
- //  }
